@@ -19,7 +19,7 @@ module.exports = (grunt) ->
 	# ==========================================================================
 
 	grunt.registerMultiTask 'sitemap', 'sitemap description', ->
-		
+
 		# Homepage from pkg
 		url = @data.homepage or grunt.config.get('pkg.homepage')
 
@@ -45,10 +45,10 @@ module.exports = (grunt) ->
 		priority = (@data.priority or 0.5).toString()
 
 		# File pattern
-		pattern = path.join root, (@data.pattern or '/**/*.html')
-		
+		pattern = @data.pattern or '**/*.html'
+
 		# Glob root
-		files = grunt.file.expand pattern
+		files = grunt.file.expand { cwd: root }, pattern
 
 		# Remove root from path and prepend homepage url
 		files = _.map files, (file) ->
@@ -69,7 +69,7 @@ module.exports = (grunt) ->
 			fileStat.url = url + urlPath
 
 			# Get last modified time
-			mtime = (fs.statSync(file).mtime).getTime()
+			mtime = (fs.statSync(path.join(root, file)).mtime).getTime()
 
 			# Format mtime to ISO (same as +00:00)
 			fileStat.mtime = new Date(mtime).toISOString()
@@ -83,7 +83,7 @@ module.exports = (grunt) ->
 		# -----------------------
 		# 		Build xml
 		# -----------------------
-		
+
 		xmlStr  = '<?xml version="1.0" encoding="UTF-8"?>\n'
 		xmlStr += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 
